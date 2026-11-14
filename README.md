@@ -1,5 +1,5 @@
 # Windows RDP Security Incident Investigation
-### SOC L1 | Windows 11 Pro | Kali Linux | Wazuh SIEM
+### Windows 11 Pro | Kali Linux | Wazuh SIEM
 
 ## 1. Project Overview
 
@@ -37,19 +37,7 @@ A dedicated directory was created on the Windows 11 machine:
 
 A file named `Confidential_Report.txt` was created with the following initial content:
 
-```text
-CONFIDENTIAL REPORT
-
-Project: Internal Security Assessment
-Status: Approved
-Access Level: Restricted
-
-This document is used for SOC investigation training.
-```
-
-**Evidence:**
-
-![Original Confidential File](./01_Original_confidential_file.png)
+![Original Confidential File](screenshots/01_Original_confidential_file.png)
 
 ### 3.2. Configuring Windows File Auditing
 
@@ -69,9 +57,7 @@ The following permission was selected:
 
 This configuration allowed Windows to generate Security Event ID 4663 when the account accessed the monitored file with the specified permissions.
 
-**Evidence:**
-
-![Windows File Auditing Configuration](./02_Windows_file_auditing_configuration.png)
+![Windows File Auditing Configuration](screenshots/02_Windows_file_auditing_configuration.png)
 
 ## 4. Attack Simulation
 
@@ -103,16 +89,9 @@ During the remote session, the attacker accessed:
 
 The following text was appended to the original document:
 
-```text
-MODIFIED DURING REMOTE SESSION
-Unauthorized modification detected.
-```
+![Modified Confidential File](screenshots/03_Modified_confidential_file.png)
 
 The changes were saved, and the file was closed.
-
-**Evidence:**
-
-![Modified Confidential File](./03_Modified_confidential_file.png)
 
 ### 4.4. Terminating the Remote Session
 
@@ -138,9 +117,8 @@ The analyst examined Windows Security Events to reconstruct the authentication a
 
 The successful RDP login occurred outside normal business hours.
 
-**Evidence:**
 
-![Wazuh Security Events](./04_Logs_in_Wazuh.png)
+![Wazuh Security Events](screenshots/04_Logs_in_Wazuh.png)
 
 ### 5.2. Failed Authentication — Event ID 4625
 
@@ -162,9 +140,8 @@ Logon Type 3 represents network authentication. It does not independently confir
 
 The event was retained as part of the authentication investigation.
 
-**Evidence:**
 
-![Failed Login Attempt in Wazuh](./05_Failed_login_attempt_in_Wazuh.png)
+![Failed Login Attempt in Wazuh](screenshots/05_Failed_login_attempt_in_Wazuh.png)
 
 ### 5.3. Successful RDP Authentication — Event ID 4624
 
@@ -186,9 +163,8 @@ The event confirms that the `SOC_Test` account successfully established an RDP s
 
 The Logon ID `0x9dada0` was used as a correlation identifier during the subsequent investigation.
 
-**Evidence:**
 
-![Successful RDP Login Details](./06_Successful_RDP_login_details.png)
+![Successful RDP Login Details](screenshots/06_Successful_RDP_login_details.png)
 
 ### 5.4. Session Termination — Event ID 4647
 
@@ -209,9 +185,8 @@ The matching Logon ID connects this event to the previously identified successfu
 
 This establishes the end of the investigated user session.
 
-**Evidence:**
 
-![Account Logged Off](./07_Account_was_logged_off.png)
+![Account Logged Off](screenshots/07_Account_was_logged_off.png)
 
 ## 6. Additional Investigation — Windows Event Viewer
 
@@ -228,6 +203,8 @@ Navigation:
 The time range was restricted to the investigated session (21:48–21:55).
 
 Event ID 4663 was identified in the Windows Security log.
+
+![Windows Security Events](screenshots/08_Windows_Security_Events.png)
 
 ### 6.1. File Modification — Event ID 4663
 
@@ -253,11 +230,8 @@ The event occurred between successful authentication and session termination.
 
 This provides evidence of file modification activity during the remote session.
 
-**Evidence:**
 
-![Windows Security Events](./08_Windows_Security_Events.png)
-
-![Windows Security Event Correlation](./09_Windows_Security_Events_correlation.png)
+![Windows Security Event Correlation](screenshots/09_Windows_Security_Events_correlation.png)
 
 ## 7. Incident Timeline and Correlation
 
