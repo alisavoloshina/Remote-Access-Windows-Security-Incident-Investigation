@@ -117,7 +117,6 @@ The analyst examined Windows Security Events to reconstruct the authentication a
 
 The successful RDP login occurred outside normal business hours.
 
-
 ![Wazuh Security Events](screenshots/04_Logs_in_Wazuh.png)
 
 ### 5.2. Failed Authentication — Event ID 4625
@@ -139,7 +138,6 @@ The event indicates an unsuccessful Network Logon attempt involving the `SOC_Tes
 Logon Type 3 represents network authentication. It does not independently confirm a failed RDP interactive logon.
 
 The event was retained as part of the authentication investigation.
-
 
 ![Failed Login Attempt in Wazuh](screenshots/05_Failed_login_attempt_in_Wazuh.png)
 
@@ -163,7 +161,6 @@ The event confirms that the `SOC_Test` account successfully established an RDP s
 
 The Logon ID `0x9dada0` was used as a correlation identifier during the subsequent investigation.
 
-
 ![Successful RDP Login Details](screenshots/06_Successful_RDP_login_details.png)
 
 ### 5.4. Session Termination — Event ID 4647
@@ -185,7 +182,6 @@ The matching Logon ID connects this event to the previously identified successfu
 
 This establishes the end of the investigated user session.
 
-
 ![Account Logged Off](screenshots/07_Account_was_logged_off.png)
 
 ## 6. Additional Investigation — Windows Event Viewer
@@ -200,9 +196,11 @@ Navigation:
 
 `Win + R → eventvwr.msc → Windows Logs → Security → Filter Current Log`
 
-The time range was restricted to the investigated session (21:48–21:55).
+The time range was restricted to the investigated session (21:45–21:56).
 
 Event ID 4663 was identified in the Windows Security log.
+
+The event occurred between successful authentication and session termination.
 
 ![Windows Security Events](screenshots/08_Windows_Security_Events.png)
 
@@ -226,10 +224,7 @@ Event ID 4663 confirms that the `SOC_Test` account exercised the recorded WriteD
 
 The matching Logon ID (`0x9dada0`) links the file access activity to the previously identified RDP session.
 
-The event occurred between successful authentication and session termination.
-
 This provides evidence of file modification activity during the remote session.
-
 
 ![Windows Security Event Correlation](screenshots/09_Windows_Security_Events_correlation.png)
 
@@ -297,62 +292,7 @@ Further investigation should verify:
 
 The absence of an event in the Wazuh Dashboard does not necessarily mean that Windows failed to generate it.
 
-## 9. Recommendations and Preventive Measures
-
-Based on the investigation, the following security improvements are recommended.
-
-### 9.1. Strengthen RDP Security
-
-- Restrict RDP access to trusted IP addresses and authorized networks.
-- Avoid exposing TCP port 3389 directly to the Internet.
-- Use Network Level Authentication (NLA).
-- Require strong passwords and enforce account lockout policies.
-- Apply Multi-Factor Authentication (MFA) where supported.
-- Disable RDP when remote access is not required.
-
-### 9.2. Improve Account Security
-
-- Apply the principle of least privilege.
-- Avoid using privileged accounts for routine remote access.
-- Monitor failed authentication attempts.
-- Investigate repeated failures followed by successful authentication.
-- Disable unused accounts.
-
-### 9.3. Protect Sensitive Files
-
-- Restrict access to confidential files using NTFS permissions.
-- Allow write access only to authorized users.
-- Enable auditing for sensitive directories.
-- Monitor file modification and deletion events.
-- Maintain regular backups and test recovery procedures.
-
-### 9.4. Improve Wazuh Monitoring
-
-- Verify that Windows Security Event ID 4663 is collected by the Wazuh agent.
-- Review the Windows event channel configuration in `ossec.conf`.
-- Verify event ingestion and indexing.
-- Create detection rules for suspicious RDP authentication activity.
-- Monitor Event IDs 4624, 4625, 4647, and 4663.
-- Correlate authentication, session, and file access events using Logon ID.
-
-## 10. Skills Demonstrated
-
-This project demonstrates practical SOC L1 investigation skills:
-
-- Windows Security Event Log analysis.
-- RDP authentication investigation.
-- Identification of Logon Types.
-- Source IP address identification.
-- User session correlation using Logon ID.
-- File System Auditing configuration.
-- Investigation of Event IDs 4624, 4625, 4647, and 4663.
-- Wazuh SIEM event investigation.
-- Cross-validation between SIEM telemetry and native Windows logs.
-- Identification of SIEM telemetry collection limitations.
-- Incident timeline reconstruction.
-- Security incident assessment and preventive recommendations.
-
-## 11. Conclusion
+## 9. Conclusion
 
 This lab demonstrates how a SOC analyst can investigate a simulated remote access incident by correlating Windows authentication, session, and file access events.
 
